@@ -1,20 +1,30 @@
+// ChatBar.js
 import React, { useState, useEffect } from 'react';
+import { fetchUsers } from '../services/userService';
 
-const ChatBar = ({ socket }) => {
+const ChatBar = ({ socket, onSelectUser }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    socket.on('newUserResponse', (data) => setUsers(data));
-  }, [socket, users]);
+    const getUsers = async () => {
+      const usersData = await fetchUsers();
+      console.log(usersData)
+      setUsers(usersData);
+    };
+
+    getUsers();
+  }, []);
 
   return (
     <div className="chat__sidebar">
       <h2>Open Chat</h2>
       <div>
-        <h4 className="chat__header">ACTIVE USERS</h4>
+        <h3>Users</h3>
         <div className="chat__users">
           {users.map((user) => (
-            <p key={user.socketID}>{user.userName}</p>
+            <p key={user?.uid} onClick={() => onSelectUser(user)}>
+              {user.username}
+            </p>
           ))}
         </div>
       </div>

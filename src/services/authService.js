@@ -1,24 +1,38 @@
 // src/services/authService.js
-import { auth } from '../utils/firebase/firebase.utils';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth, db } from '../utils/firebase/firebase.utils';
+import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
-export const authService = {
-  signUp: async (email, password) => {
-    return await auth.createUserWithEmailAndPassword(email, password);
-  },
+// Helper function to save user data to Firestore
+const saveUserDataToFirestore = async (user) => {
+  const userRef = doc(db, 'users', user.uid);
+  await setDoc(userRef, {
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName || 'Guest', // Use displayName for Google Sign-In
+    // Add other fields as needed
+  });
+};
 
-  logIn: async (email, password) => {
-    return await auth.signInWithEmailAndPassword(email, password);
-  },
+export const signUp = async (email, password, username) => {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+  await saveUserDataToFirestore({ ...user, displayName: username }); // Save with custom username
+  return user;
+};
 
-  logOut: async () => {
-    return await auth.signOut();
-  },
+export const logIn = async (email, password) => {
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  return userCredential.user;
+};
 
-  signInWithGoogle: async () => {
-    const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
-  },
+export const logOut = async () => {
+  return await signOut(auth);
+};
 
-  // Other authentication-related functions
+export const signInWithGooglePopUp = async () => {
+  const provider = new GoogleAuthProvider();
+  const userCredential = await signInWithPopup(auth, provider);
+  await saveUserDataToFirestore(userCredential.user); // Save user data from Google Sign-In
+  return userCredential.user;
 };

@@ -1,11 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-const ChatBody = ({ messages, lastMessageRef, typingStatus }) => {
+const ChatBody = ({ messages, lastMessageRef, typingStatus, currentUser }) => {
+  console.log(currentUser, 'currentUser')
+  console.log(messages, 'messages')
   const navigate = useNavigate();
+  const username = useSelector((state) => state.auth.username) || 'Guest';
 
   const handleLeaveChat = () => {
-    localStorage.removeItem('userName');
     navigate('/');
     window.location.reload();
   };
@@ -20,27 +23,19 @@ const ChatBody = ({ messages, lastMessageRef, typingStatus }) => {
       </header>
 
       <div className="message__container">
-        {messages.map((message) =>
-          message.name === localStorage.getItem('userName') ? (
-            <div className="message__chats" key={message.id}>
-              <p className="sender__name">You</p>
-              <div className="message__sender">
-                <p>{message.text}</p>
-              </div>
+        {messages.map((message) => (
+         currentUser && <div className="message__chats" key={message.id}>
+          {/* <p className="sender__name">{message.senderId === currentUser.uid ? 'You' : message.name}</p> */}
+
+            <div className={message.senderId === currentUser?.uid ? 'message__sender' : 'message__recipient'}>
+              <p>{message.text}</p>
             </div>
-          ) : (
-            <div className="message__chats" key={message.id}>
-              <p>{message.name}</p>
-              <div className="message__recipient">
-                <p>{message.text}</p>
-              </div>
-            </div>
-          )
-        )}
+          </div>
+        ))}
 
         <div className="message__status">
-  <p>{typingStatus}</p>
-</div>
+          <p>{typingStatus}</p>
+        </div>
         <div ref={lastMessageRef} />
       </div>
     </>

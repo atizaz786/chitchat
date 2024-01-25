@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
 
-const ChatFooter = ({ socket }) => {
+const ChatFooter = ({ socket, recipientId, currentUser, addMessage }) => {
   const [message, setMessage] = useState('');
 
   const handleTyping = () =>
     socket.emit('typing', `${localStorage.getItem('userName')} is typing`);
 
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (message.trim() && localStorage.getItem('userName')) {
-      socket.emit('message', {
-        text: message,
-        name: localStorage.getItem('userName'),
-        id: `${socket.id}${Math.random()}`,
-        socketID: socket.id,
-      });
-    }
-    setMessage('');
-  };
+    const handleSendMessage = (e) => {
+      e.preventDefault();
+      if (message.trim()) {
+        const newMessage = {
+          text: message,
+          senderId: currentUser.uid,
+          recipientId: recipientId,
+          id: `${socket.id}${Math.random()}`,
+        };
+        socket.emit('message', newMessage);
+        addMessage(newMessage); // Update local state
+        setMessage('');
+      }
+    };
   return (
     <div className="chat__footer">
       <form className="form" onSubmit={handleSendMessage}>
@@ -37,3 +39,7 @@ const ChatFooter = ({ socket }) => {
 };
 
 export default ChatFooter;
+
+
+
+
