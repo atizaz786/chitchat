@@ -1,37 +1,22 @@
 // src/components/authentication/LoginForm.js
-import React from 'react';
+import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { loginSchema } from './validationSchema';
 import { useDispatch } from 'react-redux';
 import { setCurrentUser, setError, setLoading } from '../../store/slices/authSlice';
-import { logIn } from '../../services/authService';
-import { fetchUserData } from '../../services/userService';
+
 import GoogleSignInButton from './SignInWithGoogle';
-import { handleAuth } from '../../utils/auth/auth.utils'; // Ensure this component is correctly implemented
+import { handleAuth } from '../../utils/auth/auth.utils';
+import Snackbar from '../Snackbar'; // Ensure this component is correctly implemented
 
 const LoginForm = ({ onToggleForms }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [message, setMessage] = useState('');
 
-  // const handleSubmit = async (values, { setSubmitting }) => {
-  //   try {
-  //     dispatch(setLoading(true));
-  //     const userCredential = await logIn(values.email, values.password);
-  //     const additionalUserData = await fetchUserData(userCredential.uid); // Fetch additional user data
-  //     dispatch(setCurrentUser({ ...userCredential.user, ...additionalUserData }));
-  //     navigate('/chat');
-  //     dispatch(setError(null));
-  //   } catch (error) {
-  //     console.log(error)
-  //     dispatch(setError(error.message));
-  //   } finally {
-  //     dispatch(setLoading(false));
-  //     setSubmitting(false);
-  //   }
-  // };
   const handleSubmit = async (values, { setSubmitting }) => {
-    await handleAuth('login', values, dispatch, setError, setLoading, setCurrentUser, navigate);
+    await handleAuth('login', values, dispatch, setError, setLoading, setCurrentUser, navigate, setMessage);
     setSubmitting(false);
   };
 
@@ -87,6 +72,7 @@ const LoginForm = ({ onToggleForms }) => {
           </p>
         </div>
       </div>
+      <Snackbar message={message} setMessage={setMessage} />
     </div>
   );
 };

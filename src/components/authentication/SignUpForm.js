@@ -1,5 +1,5 @@
 // src/components/authentication/SignupForm.js
-import React from "react";
+import React, {useState} from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { signUpSchema } from "./validationSchema";
 import { useDispatch } from "react-redux";
@@ -12,10 +12,12 @@ import {
 import { signUp } from "../../services/authService";
 import { signUpErrorMessages } from "./ErrorMesages";
 import { handleAuth } from "../../utils/auth/auth.utils";
+import Snackbar from "../Snackbar";
 
 const SignupForm = ({ onToggleForms }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [message, setMessage] = useState("");
 
   // const handleSubmit = async (values, { setSubmitting }) => {
   //   try {
@@ -40,7 +42,7 @@ const SignupForm = ({ onToggleForms }) => {
   // };
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    await handleAuth('signup', values, dispatch, setError, setLoading, setCurrentUser, navigate);
+    await handleAuth('signup', values, dispatch, setError, setLoading, setCurrentUser, navigate, setMessage);
     setSubmitting(false);
   };
 
@@ -116,6 +118,7 @@ const SignupForm = ({ onToggleForms }) => {
           </p>
         </div>
       </div>
+      <Snackbar message={message} setMessage={setMessage} />
     </div>
   );
 };
