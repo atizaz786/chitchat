@@ -7,27 +7,32 @@ import { useDispatch } from 'react-redux';
 import { setCurrentUser, setError, setLoading } from '../../store/slices/authSlice';
 import { logIn } from '../../services/authService';
 import { fetchUserData } from '../../services/userService';
-import GoogleSignInButton from './SignInWithGoogle'; // Ensure this component is correctly implemented
+import GoogleSignInButton from './SignInWithGoogle';
+import { handleAuth } from '../../utils/auth/auth.utils'; // Ensure this component is correctly implemented
 
 const LoginForm = ({ onToggleForms }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // const handleSubmit = async (values, { setSubmitting }) => {
+  //   try {
+  //     dispatch(setLoading(true));
+  //     const userCredential = await logIn(values.email, values.password);
+  //     const additionalUserData = await fetchUserData(userCredential.uid); // Fetch additional user data
+  //     dispatch(setCurrentUser({ ...userCredential.user, ...additionalUserData }));
+  //     navigate('/chat');
+  //     dispatch(setError(null));
+  //   } catch (error) {
+  //     console.log(error)
+  //     dispatch(setError(error.message));
+  //   } finally {
+  //     dispatch(setLoading(false));
+  //     setSubmitting(false);
+  //   }
+  // };
   const handleSubmit = async (values, { setSubmitting }) => {
-    try {
-      dispatch(setLoading(true));
-      const userCredential = await logIn(values.email, values.password);
-      const additionalUserData = await fetchUserData(userCredential.uid); // Fetch additional user data
-      dispatch(setCurrentUser({ ...userCredential.user, ...additionalUserData }));
-      navigate('/chat');
-      dispatch(setError(null));
-    } catch (error) {
-      console.log(error)
-      dispatch(setError(error.message));
-    } finally {
-      dispatch(setLoading(false));
-      setSubmitting(false);
-    }
+    await handleAuth('login', values, dispatch, setError, setLoading, setCurrentUser, navigate);
+    setSubmitting(false);
   };
 
   return (

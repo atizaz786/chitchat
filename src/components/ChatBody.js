@@ -3,10 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const ChatBody = ({ messages, lastMessageRef, typingStatus, currentUser }) => {
-  console.log(currentUser, 'currentUser')
-  console.log(messages, 'messages')
-  const navigate = useNavigate();
-  const username = useSelector((state) => state.auth.username) || 'Guest';
+    const navigate = useNavigate();
 
   const handleLeaveChat = () => {
     navigate('/');
@@ -23,9 +20,9 @@ const ChatBody = ({ messages, lastMessageRef, typingStatus, currentUser }) => {
       </header>
 
       <div className="message__container">
-        {messages.map((message) => (
-         currentUser && <div className="message__chats" key={message.id}>
-          {/* <p className="sender__name">{message.senderId === currentUser.uid ? 'You' : message.name}</p> */}
+        {currentUser && messages.map((message) => (
+         <div className="message__chats" key={message.timestamp}>
+          <p className="sender__name">{message.senderId === currentUser.uid ? 'You' : message.name}</p>
 
             <div className={message.senderId === currentUser?.uid ? 'message__sender' : 'message__recipient'}>
               <p>{message.text}</p>

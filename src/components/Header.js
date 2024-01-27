@@ -9,7 +9,7 @@ const Header = ({ onToggleDrawer }) => {
         <button onClick={onToggleDrawer} className="mr-4">
           <MdMenu className="h-6 w-6" /> {/* Using the MdMenu icon */}
         </button>
-        <img src="logo.png" alt="Logo" className="h-8" /> {/* Replace with your logo */}
+        {/* <img src="logo.png" alt="Logo" className="h-8" /> Replace with your logo */}
       </div>
       <nav>
         <a href="#about" className="text-white px-4 hover:text-gray-300">About Us</a>

@@ -1,22 +1,19 @@
 // src/services/conversationService.js
 import { db } from '../utils/firebase/firebase.utils';
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
 
 export const getConversation = async (userId1, userId2) => {
-  const conversationsRef = collection(db, 'conversations');
-  const q = query(conversationsRef, where('userIds', 'array-contains', userId1));
+  const conversationId = [userId1, userId2].sort().join('_');
+  const docRef = doc(db, 'conversations', conversationId);
+  const docSnapshot = await getDoc(docRef);
 
-  const querySnapshot = await getDocs(q);
-  let conversation = null;
-
-  querySnapshot.forEach((doc) => {
-    if (doc.data().userIds.includes(userId2)) {
-      conversation = { id: doc.id, ...doc.data() };
-    }
-  });
-
-  return conversation;
+  if (docSnapshot.exists()) {
+    return { id: docSnapshot.id, ...docSnapshot.data() };
+  } else {
+    return null; // Conversation does not exist
+  }
 };
+
 
 export const createConversation = async (userId1, userId2) => {
   const conversationsRef = collection(db, 'conversations');

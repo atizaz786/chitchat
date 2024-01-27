@@ -3,6 +3,7 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { signUpSchema } from "./validationSchema";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   setCurrentUser,
   setError,
@@ -10,30 +11,37 @@ import {
 } from "../../store/slices/authSlice";
 import { signUp } from "../../services/authService";
 import { signUpErrorMessages } from "./ErrorMesages";
+import { handleAuth } from "../../utils/auth/auth.utils";
 
 const SignupForm = ({ onToggleForms }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // const handleSubmit = async (values, { setSubmitting }) => {
+  //   try {
+  //     dispatch(setLoading(true));
+  //     const user = await signUp(values.email, values.password, values.username);
+  //     dispatch(setCurrentUser(user));
+  //     dispatch(setError(null));
+  //     // In your sign-up logic
+  //     localStorage.setItem("userName", values?.username); // Store the username
+
+  //     dispatch(setError(null));
+  //   } catch (error) {
+  //     console.log(error);
+  //     let errorCode = signUpErrorMessages(error.code);
+
+  //     alert(errorCode);
+  //     dispatch(setError(error.message));
+  //   } finally {
+  //     dispatch(setLoading(false));
+  //     setSubmitting(false);
+  //   }
+  // };
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    try {
-      dispatch(setLoading(true));
-      const user = await signUp(values.email, values.password, values.username);
-      dispatch(setCurrentUser(user));
-      dispatch(setError(null));
-      // In your sign-up logic
-      localStorage.setItem("userName", values?.username); // Store the username
-
-      dispatch(setError(null));
-    } catch (error) {
-      console.log(error);
-      let errorCode = signUpErrorMessages(error.code);
-
-      alert(errorCode);
-      dispatch(setError(error.message));
-    } finally {
-      dispatch(setLoading(false));
-      setSubmitting(false);
-    }
+    await handleAuth('signup', values, dispatch, setError, setLoading, setCurrentUser, navigate);
+    setSubmitting(false);
   };
 
   return (
