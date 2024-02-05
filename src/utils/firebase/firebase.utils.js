@@ -8,15 +8,6 @@ import {getFirestore} from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDVgaFvJGPCN8ttE5M9CM_6sby6WUq3L_c",
-  authDomain: "chitchat-52721.firebaseapp.com",
-  projectId: "chitchat-52721",
-  storageBucket: "chitchat-52721.appspot.com",
-  messagingSenderId: "57801798441",
-  appId: "1:57801798441:web:bf890ede1222e0a9663d38",
-  measurementId: "G-8HPVKNHE31"
-};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
